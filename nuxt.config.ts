@@ -2,13 +2,15 @@
 export default defineNuxtConfig({
   runtimeConfig: {
     public: {
-      apiBase: process.env.NUXT_API_BASE
-    }
+      apiBase: process.env.NUXT_API_BASE,
+    },
   },
   modules: [
-    '@nuxtjs/tailwindcss',
+    "@nuxt/ui",
+    "@nuxtjs/tailwindcss",
+    "@pinia/nuxt",
     [
-      '@nuxtjs/google-fonts',
+      "@nuxtjs/google-fonts",
       {
         families: {
           Lato: true,
@@ -18,5 +20,6 @@ export default defineNuxtConfig({
         },
       },
     ],
+    "nuxt-icons",
   ],
-})
+});
