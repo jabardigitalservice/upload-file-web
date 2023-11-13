@@ -1,31 +1,20 @@
-
 <template>
-  <div>
-    <h1 class="text-red-700">File Upload</h1>
-    <form>
-      <label for="file">File: </label>
-      <input type="file" name="file" @change="onChange" />
-      <br />
-      <div>
-        result:
-        <div v-if="state.url">
-          url: {{ state.url }}
-          <div>
-            <button @click="onClick">Copy to clipboard</button>
-          </div>
-        </div>
-        <div></div>
-      </div>
-    </form>
-
+  <div class="mt-14">
     <DragAndDropFile
       ref="BaseDragAndDropFile"
       label="Upload File :"
       sublabel="Tipe File JPG/JPEG/PNG dengan maksimal ukuran file 10 MB"
       height-drag-and-drop="h-[350px]"
       :detail-drag-and-drop="detailDragAndDrop"
-      @preview-file="previewFile"
+      @upload-file="uploadFile"
     />
+
+    <div v-if="state.url">
+      url: {{ state.url }}
+      <div>
+        <button @click="onClick">Copy to clipboard</button>
+      </div>
+    </div>
 
     <ViewFileModal
       :show="dataImage.showDialog"
@@ -36,9 +25,8 @@
   </div>
 </template>
 
-
 <script setup>
-  import { useDataImage } from '@/store/index'
+// import { useDataImage } from "@/store/index";
 
 const runtimeConfig = useRuntimeConfig();
 const state = reactive({
@@ -51,10 +39,26 @@ const onClick = async (e) => {
   alert("Your link has been copied to clipboard ");
 };
 
-const onChange = async (e) => {
-  const files = e.target.files;
+const detailDragAndDrop = ref({
+  informationSizeCompatible:
+    "Ukuran file dokumen SK tidak boleh melebihi 10 MB.",
+  informationFormatCompatible:
+    "Hanya file yang berformat JPG/JPEG/PNG yang dapat diupload.",
+  formatTypeFile: ["image/jpeg", "image/png", "image/jpg"],
+  maxSizeFile: 10485760 ,
+  acceptFile: ".jpg,.jpeg,.png",
+});
+
+const dataImage = ref({
+  showDialog: false,
+  fileId: "",
+  mimeType: "",
+});
+
+const uploadFile = async (value) => {
   const formData = new FormData();
-  formData.append("file", files[0]);
+  formData.append("file", value.file);
+  formData.append("seconds", value.seconds);
   try {
     const { data } = await useFetch(
       runtimeConfig.public.apiBase + "/v1/upload",
@@ -68,29 +72,4 @@ const onChange = async (e) => {
     console.log(error);
   }
 };
-
-const detailDragAndDrop = ref({
-  informationSizeCompatible:
-    "Ukuran file dokumen SK tidak boleh melebihi 10 MB.",
-  informationFormatCompatible:
-    "Hanya file yang berformat JPG/JPEG/PNG yang dapat diupload.",
-  formatTypeFile: ["image/jpeg", "image/png", "image/jpg"],
-  // maxSizeFile: 10485760 ,
-  maxSizeFile: 2097152,
-  acceptFile: ".jpg,.jpeg,.png",
-});
-
-
-const dataImage = ref({
-    showDialog: false,
-    fileId: '',
-    mimeType: '',
-  })
-
-  const previewFile = () => {
-    dataImage.value.showDialog = true
-    dataImage.value.fileId = 'loading'
-    dataImage.value.fileId = useDataImage().dataImage?.data
-    dataImage.value.mimeType = useDataImage().dataImage?.mimeType
-  }
 </script>

@@ -2,11 +2,40 @@
   <div class="max-w-3xl mx-auto">
     <div class="font-lato text-gray-800">
       <slot name="header" />
-      <label
-        v-show="label"
-        class="message-notif-form__label-required text-gray-800 font-bold"
-        >{{ label }}</label
-      >
+      <div class="flex items-center justify-between">
+        <div>
+          <label
+            for="delete-image-times"
+            class="block mb-2 text-sm font-bold text-gray-900 dark:text-white"
+            >Auto Delete Image :
+          </label>
+          <select
+            v-model="selectedDuration"
+            id="delete-image-times"
+            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+          >
+            <option
+              v-for="option in durationOptions"
+              :key="option.value"
+              :value="option.value"
+            >
+              {{ option.label }}
+            </option>
+          </select>
+        </div>
+
+        <button
+          type="button"
+          :class="{
+            'cursor-not-allowed': disabledButton,
+            'opacity-50': disabledButton,
+          }"
+          @click="onUploadFile()"
+          class="px-3 py-2 text-xs font-medium text-center text-white bg-blue-700 rounded-lg hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+        >
+          Upload File
+        </button>
+      </div>
       <div class="mt-2 flex w-full items-center justify-center">
         <div
           v-if="fileInputIsChange"
@@ -117,170 +146,170 @@
 </template>
 
 <script setup lang="ts">
-  import { useDataImage } from '@/store/index'
+import { useDataImage } from "@/store/index";
 
-  const props = defineProps({
-    detailDragAndDrop: {
-      type: Object,
-      default: () => {},
-    },
-    heightDragAndDrop: {
-      type: String,
-      default: 'h-40',
-    },
-    label: {
-      type: String,
-      default: '',
-    },
-    sublabel: {
-      type: String,
-      default: '',
-    },
-  })
+const props = defineProps({
+  detailDragAndDrop: {
+    type: Object,
+    default: () => {},
+  },
+  heightDragAndDrop: {
+    type: String,
+    default: "h-40",
+  },
+  label: {
+    type: String,
+    default: "",
+  },
+  sublabel: {
+    type: String,
+    default: "",
+  },
+});
 
-  const emit = defineEmits(['previewFile'])
+const emit = defineEmits(["uploadFile"]);
 
-  const files = ref()
-  const dataFiles = ref({
-    name: '',
-    isConfidental: false,
-    mimeType: '',
-    roles: ['admin'],
-    data: '',
-    fileSize: '',
-    fileCorrect: false,
-  })
-  const fileInputIsChange = ref(false)
-  const proggresBarIsSuccess = ref(false)
-  const percentageProggres = ref(0)
-  const intervalPercentage = ref(null)
-  const formatSizeFile = ['Bytes', 'KB', 'MB', 'GB', 'TB']
-  const responseImage = ref('')
-  const fileIsCorrect = ref(false)
-  const disabledButton = ref(true)
+const files = ref();
+const dataFiles = ref({
+  name: "",
+  mimeType: "",
+  fileSize: "",
+  fileCorrect: false,
+});
+const fileInputIsChange = ref(false);
+const proggresBarIsSuccess = ref(false);
+const percentageProggres = ref(0);
+const intervalPercentage = ref(null);
+const formatSizeFile = ["Bytes", "KB", "MB", "GB", "TB"];
+const responseImage = ref("");
+const fileIsCorrect = ref(false);
+const disabledButton = ref(true);
 
-  const onChangeUpload = (e) => {
-    if (e.target.files[0]) {
-      files.value = e.target.files[0]
-      dataFiles.value.name = files.value.name
-      dataFiles.value.mimeType = files.value.type
-      dataFiles.value.fileSize = convertSize(files.value.size)
-      fileInputIsChange.value = true
-      convertFileToBase64(files.value)
-      runProgressBar()
-      checkFileValidation()
-      dataFiles.value.fileCorrect = fileIsCorrect.value
-      useDataImage().dataImage = JSON.parse(JSON.stringify(dataFiles.value))
-    }
+const onChangeUpload = (e) => {
+  if (e.target.files[0]) {
+    files.value = e.target.files[0];
+    dataFiles.value.name = files.value.name;
+    dataFiles.value.mimeType = files.value.type;
+    dataFiles.value.fileSize = convertSize(files.value.size);
+    fileInputIsChange.value = true;
+    runProgressBar();
+    checkFileValidation();
+    dataFiles.value.fileCorrect = fileIsCorrect.value;
   }
+};
 
-  const dragover = (e: Event): void => {
-    let element = e.target as HTMLInputElement
+const dragover = (e: Event): void => {
+  let element = e.target as HTMLInputElement;
 
-    // add style drag and drop
-    if (!element.classList.contains('bg-gray-200')) {
-      element.classList.remove('bg-gray-50')
-      element.classList.add('bg-gray-200')
-    }
-    e.preventDefault()
+  // add style drag and drop
+  if (!element.classList.contains("bg-gray-200")) {
+    element.classList.remove("bg-gray-50");
+    element.classList.add("bg-gray-200");
   }
+  e.preventDefault();
+};
 
-  const dragleave = (e: Event): void => {
-    let element = e.target as HTMLInputElement
-    // clear style drag and drop
-    element.classList.add('bg-gray-50')
-    element.classList.remove('bg-gray-200')
+const dragleave = (e: Event): void => {
+  let element = e.target as HTMLInputElement;
+  // clear style drag and drop
+  element.classList.add("bg-gray-50");
+  element.classList.remove("bg-gray-200");
+};
+
+const drop = (e: Event): void => {
+  e.preventDefault();
+  let element = e.target as HTMLInputElement;
+
+  element.files = e?.dataTransfer.files;
+  onChangeUpload(e);
+  // clear style drag and drop
+  element.classList.add("bg-gray-50");
+  element.classList.remove("bg-gray-200");
+};
+
+const convertSize = (sizeFile: string) => {
+  if (sizeFile === 0) {
+    return "n/a";
   }
-
-  const drop = (e: Event): void => {
-    e.preventDefault()
-    let element = e.target as HTMLInputElement
-
-    element.files = e?.dataTransfer.files
-    onChangeUpload(e)
-    // clear style drag and drop
-    element.classList.add('bg-gray-50')
-    element.classList.remove('bg-gray-200')
+  const indexFileSize = parseInt(
+    Math.floor(Math.log(sizeFile) / Math.log(1024))
+  );
+  if (indexFileSize === 0) {
+    return sizeFile + " " + formatSizeFile[indexFileSize];
   }
+  return (
+    (sizeFile / Math.pow(1024, indexFileSize)).toFixed(1) +
+    " " +
+    formatSizeFile[indexFileSize]
+  );
+};
 
-  const convertSize = (sizeFile: string) => {
-    if (sizeFile === 0) {
-      return 'n/a'
-    }
-    const indexFileSize = parseInt(
-      Math.floor(Math.log(sizeFile) / Math.log(1024)),
-    )
-    if (indexFileSize === 0) {
-      return sizeFile + ' ' + formatSizeFile[indexFileSize]
-    }
-    return (
-      (sizeFile / Math.pow(1024, indexFileSize)).toFixed(1) +
-      ' ' +
-      formatSizeFile[indexFileSize]
-    )
+const runProgressBar = () => {
+  if (percentageProggres.value === 0) {
+    proggresBarIsSuccess.value = true;
+    percentageProggres.value = 1;
+    intervalPercentage.value = setInterval(setProggresBar, 10);
   }
+};
 
-  const runProgressBar = () => {
-    if (percentageProggres.value === 0) {
-      proggresBarIsSuccess.value = true
-      percentageProggres.value = 1
-      intervalPercentage.value = setInterval(setProggresBar, 10)
-    }
+const setProggresBar = () => {
+  if (percentageProggres.value >= 100) {
+    clearInterval(intervalPercentage.value);
+    percentageProggres.value = 0;
+    proggresBarIsSuccess.value = false;
+  } else {
+    percentageProggres.value++;
   }
+};
 
-  const setProggresBar = () => {
-    if (percentageProggres.value >= 100) {
-      clearInterval(intervalPercentage.value)
-      percentageProggres.value = 0
-      proggresBarIsSuccess.value = false
+const resetDataFile = () => {
+  percentageProggres.value = 0;
+  proggresBarIsSuccess.value = false;
+  fileInputIsChange.value = false;
+  files.value = "";
+  responseImage.value = "";
+  fileIsCorrect.value = false;
+  disabledButton.value = true;
+  useDataImage().dataImage = {};
+};
+
+const checkFileValidation = () => {
+  if (files.value) {
+    if (fileSizeIsCompatible() && formatFileIsCompatible()) {
+      fileIsCorrect.value = true;
+      disabledButton.value = false;
     } else {
-      percentageProggres.value++
+      fileIsCorrect.value = false;
     }
+  } else {
+    fileIsCorrect.value = false;
   }
+};
 
-  const resetDataFile = () => {
-    percentageProggres.value = 0
-    proggresBarIsSuccess.value = false
-    fileInputIsChange.value = false
-    files.value = ''
-    responseImage.value = ''
-    fileIsCorrect.value = false
-    disabledButton.value = true
-    useDataImage().dataImage = {}
-  }
+const fileSizeIsCompatible = () => {
+  return files.value.size <= props.detailDragAndDrop.maxSizeFile;
+};
 
-  const previewFile = () => {
-    emit('previewFile')
-  }
+const formatFileIsCompatible = () => {
+  return props.detailDragAndDrop.formatTypeFile.includes(files.value.type);
+};
 
-  const convertFileToBase64 = (FileObject: Blob) => {
-    const reader = new FileReader()
-    reader.onload = () => {
-      dataFiles.value.data = reader.result.split(',')[1]
+const selectedDuration = ref(60);
+const durationOptions = ref([
+  { value: 60, label: "Setelah 1 menit" },
+  { value: 300, label: "Setelah 5 menit" },
+  { value: 600, label: "Setelah 10 menit" },
+  { value: 1800, label: "Setelah 30 menit" },
+  { value: 3600, label: "Setelah 1 jam" },
+  { value: 10800, label: "Setelah 3 jam" },
+  { value: 21600, label: "Setelah 6 jam" },
+  { value: 43200, label: "Setelah 12 jam" },
+  { value: 86400, label: "Setelah 1 hari" },
+  { value: 604800, label: "Setelah 1 Minggu" },
+  { value: 2592000, label: "Setelah 1 bulan" },
+]);
 
-      useDataImage().dataImage = { ...dataFiles.value }
-    }
-    reader.readAsDataURL(FileObject)
-  }
-
-  const checkFileValidation = () => {
-    if (files.value) {
-      if (fileSizeIsCompatible() && formatFileIsCompatible()) {
-        fileIsCorrect.value = true
-        disabledButton.value = false
-      } else {
-        fileIsCorrect.value = false
-      }
-    } else {
-      fileIsCorrect.value = false
-    }
-  }
-
-  const fileSizeIsCompatible = () => {
-    return files.value.size <= props.detailDragAndDrop.maxSizeFile
-  }
-
-  const formatFileIsCompatible = () => {
-    return props.detailDragAndDrop.formatTypeFile.includes(files.value.type)
-  }
+const onUploadFile = async () => {
+  emit("uploadFile", { file: files.value, seconds: selectedDuration.value });
+};
 </script>
