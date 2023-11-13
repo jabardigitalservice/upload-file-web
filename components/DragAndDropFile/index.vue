@@ -26,6 +26,7 @@
 
         <button
           type="button"
+          :disabled="disabledButton"
           :class="{
             'cursor-not-allowed': disabledButton,
             'opacity-50': disabledButton,
