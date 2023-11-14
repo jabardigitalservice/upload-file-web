@@ -48,10 +48,15 @@
           ]"
           class="flex w-full flex-col justify-center rounded-lg border-2 border-dashed px-4"
         >
-          <div class="mb-3 flex items-center justify-center">
-            <NuxtIcon
-              name="common/document"
-              class="h-9 w-9 text-4xl text-gray-600"
+          <div
+            id="image-preview"
+            class="max-w-lg p-6 mb-4 rounded-lg items-center mx-auto text-center"
+          >
+            <img
+              v-if="url"
+              :src="url"
+              class="max-h-48 rounded-lg mx-auto"
+              alt="Image preview"
             />
           </div>
 
@@ -62,24 +67,10 @@
               >
                 {{ dataFiles.name }}
               </p>
-              <template v-if="proggresBarIsSuccess">
-                <div class="mb-1 h-1.5 w-full rounded-full bg-gray-200">
-                  <div
-                    class="h-1.5 rounded-full bg-green-500"
-                    :style="{ width: percentageProggres + '%' }"
-                  />
-                </div>
-                <div class="mb-1">
-                  <span class="font-lato text-[11px] font-normal text-gray-600">
-                    Diupload ... {{ percentageProggres }} %
-                  </span>
-                </div>
-              </template>
-              <template v-else>
-                <p class="mb-2 font-lato text-[11px] font-normal text-gray-600">
-                  Ukuran {{ dataFiles.fileSize }}
-                </p>
-              </template>
+
+              <p class="mb-2 font-lato text-[11px] font-normal text-gray-600">
+                Ukuran {{ dataFiles.fileSize }}
+              </p>
 
               <p
                 v-if="!fileSizeIsCompatible()"
@@ -99,13 +90,6 @@
             <div class="flex flex-row">
               <button class="w-4" @click="resetDataFile">
                 <NuxtIcon name="common/trash" class="h-4 w-4 text-red-600" />
-              </button>
-              <button class="ml-5 w-4" @click.prevent="previewFile">
-                <NuxtIcon
-                  v-if="!proggresBarIsSuccess"
-                  name="common/eyes"
-                  class="h-4 w-4 text-green-600"
-                />
               </button>
             </div>
           </div>
@@ -169,16 +153,17 @@ const props = defineProps({
 const emit = defineEmits(["uploadFile", "resetUrl"]);
 
 const files = ref();
+const url = ref("");
 const dataFiles = ref({
   name: "",
   mimeType: "",
   fileSize: "",
   fileCorrect: false,
 });
+
 const fileInputIsChange = ref(false);
-const proggresBarIsSuccess = ref(false);
+
 const percentageProggres = ref(0);
-const intervalPercentage = ref(null);
 const formatSizeFile = ["Bytes", "KB", "MB", "GB", "TB"];
 const responseImage = ref("");
 const fileIsCorrect = ref(false);
@@ -187,11 +172,11 @@ const disabledButton = ref(true);
 const onChangeUpload = (e) => {
   if (e.target.files[0]) {
     files.value = e.target.files[0];
+    url.value = URL.createObjectURL(files.value);
     dataFiles.value.name = files.value.name;
     dataFiles.value.mimeType = files.value.type;
     dataFiles.value.fileSize = convertSize(files.value.size);
     fileInputIsChange.value = true;
-    runProgressBar();
     checkFileValidation();
     dataFiles.value.fileCorrect = fileIsCorrect.value;
   }
@@ -243,32 +228,14 @@ const convertSize = (sizeFile: string) => {
   );
 };
 
-const runProgressBar = () => {
-  if (percentageProggres.value === 0) {
-    proggresBarIsSuccess.value = true;
-    percentageProggres.value = 1;
-    intervalPercentage.value = setInterval(setProggresBar, 10);
-  }
-};
-
-const setProggresBar = () => {
-  if (percentageProggres.value >= 100) {
-    clearInterval(intervalPercentage.value);
-    percentageProggres.value = 0;
-    proggresBarIsSuccess.value = false;
-  } else {
-    percentageProggres.value++;
-  }
-};
-
 const resetDataFile = () => {
   percentageProggres.value = 0;
-  proggresBarIsSuccess.value = false;
   fileInputIsChange.value = false;
   files.value = "";
   responseImage.value = "";
   fileIsCorrect.value = false;
   disabledButton.value = true;
+  url.value = "";
   emit("resetUrl");
 };
 
