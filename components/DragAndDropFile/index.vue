@@ -147,8 +147,6 @@
 </template>
 
 <script setup lang="ts">
-import { useDataImage } from "@/store/index";
-
 const props = defineProps({
   detailDragAndDrop: {
     type: Object,
@@ -168,7 +166,7 @@ const props = defineProps({
   },
 });
 
-const emit = defineEmits(["uploadFile"]);
+const emit = defineEmits(["uploadFile", "resetUrl"]);
 
 const files = ref();
 const dataFiles = ref({
@@ -271,7 +269,7 @@ const resetDataFile = () => {
   responseImage.value = "";
   fileIsCorrect.value = false;
   disabledButton.value = true;
-  useDataImage().dataImage = {};
+  emit("resetUrl");
 };
 
 const checkFileValidation = () => {

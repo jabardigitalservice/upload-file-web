@@ -30,7 +30,6 @@
   </div>
 </template>
 <script setup lang="ts">
-import { base64ToBlobUrl } from "~/utils";
 const props = defineProps({
   title: {
     type: String,
