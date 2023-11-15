@@ -269,17 +269,17 @@ const formatFileIsCompatible = () => {
 
 const selectedDuration = ref(60);
 const durationOptions = ref([
-  { value: 60, label: "Setelah 1 menit" },
-  { value: 300, label: "Setelah 5 menit" },
-  { value: 600, label: "Setelah 10 menit" },
-  { value: 1800, label: "Setelah 30 menit" },
-  { value: 3600, label: "Setelah 1 jam" },
-  { value: 10800, label: "Setelah 3 jam" },
-  { value: 21600, label: "Setelah 6 jam" },
-  { value: 43200, label: "Setelah 12 jam" },
-  { value: 86400, label: "Setelah 1 hari" },
+  { value: 60, label: "Setelah 1 Menit" },
+  { value: 300, label: "Setelah 5 Menit" },
+  { value: 600, label: "Setelah 10 Menit" },
+  { value: 1800, label: "Setelah 30 Menit" },
+  { value: 3600, label: "Setelah 1 Jam" },
+  { value: 10800, label: "Setelah 3 Jam" },
+  { value: 21600, label: "Setelah 6 Jam" },
+  { value: 43200, label: "Setelah 12 Jam" },
+  { value: 86400, label: "Setelah 1 Hari" },
   { value: 604800, label: "Setelah 1 Minggu" },
-  { value: 2592000, label: "Setelah 1 bulan" },
+  { value: 2592000, label: "Setelah 1 Bulan" },
 ]);
 
 const onUploadFile = async () => {

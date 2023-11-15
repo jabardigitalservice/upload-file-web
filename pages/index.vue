@@ -7,14 +7,16 @@
       height-drag-and-drop="h-[350px]"
       :detail-drag-and-drop="detailDragAndDrop"
       @upload-file="uploadFile"
-      @reset-url="state.url = ''"
+      @reset-url="resetImageLink"
     />
 
-    <div v-if="!state.url && state.loading"
+    <div
+      v-if="!state.url && state.loading"
       class="w-12 h-12 rounded-full animate-spin border-4 border-dashed border-green-500 border-t-transparent text-center mx-auto mt-5"
     ></div>
 
-    <CopyToClip v-if="state.url" :url="state.url" />
+    <CopyToClip v-if="state.tagImage" :url="state.tagImage" label="Tag HTML" />
+    <CopyToClip v-if="state.url" :url="state.url" label="Image Link" />
   </div>
 </template>
 
@@ -22,6 +24,7 @@
 const runtimeConfig = useRuntimeConfig();
 const state = reactive({
   url: "",
+  tagImage: "",
   loading: false,
 });
 
@@ -36,7 +39,7 @@ const detailDragAndDrop = ref({
 });
 
 const uploadFile = async (value) => {
-
+  resetImageLink()
   state.loading = true;
   const formData = new FormData();
   formData.append("file", value.file);
@@ -49,10 +52,16 @@ const uploadFile = async (value) => {
         body: formData,
       }
     );
-    state.url = `<img src="${data.value.data.url}" alt="${value.file.name}">`;
+    state.tagImage = `<img src="${data.value.data.url}" alt="${value.file.name}">`;
+    state.url = data.value.data.url;
     state.loading = false;
   } catch (error) {
     console.error(error);
   }
 };
+
+function resetImageLink() {
+  state.url = "";
+  state.tagImage = "";
+}
 </script>
