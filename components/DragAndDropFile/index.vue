@@ -89,7 +89,12 @@
 
             <div class="flex flex-row">
               <button class="w-4" @click="resetDataFile">
-                <NuxtIcon name="common/trash" class="h-4 w-4 text-red-600" />
+                <IconSvg
+                  class="h-4 w-4 text-red-600"
+                  icon="/icons/common/trash.svg"
+                  :size="16"
+                  fillColor="#CB0000"
+                />
               </button>
             </div>
           </div>
@@ -104,9 +109,11 @@
           @drop="drop"
         >
           <div class="flex flex-col items-center justify-center">
-            <NuxtIcon
-              name="common/upload-file"
-              class="mb-3 text-4xl text-gray-700"
+            <IconSvg
+              class="text-4xl text-gray-700"
+              icon="/icons/common/upload-file.svg"
+              :size="36"
+              fillColor="#000"
             />
             <h5 class="text-xl mt-5 text-gray-800 font-bold">
               Drop Files to Upload

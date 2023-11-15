@@ -36,7 +36,7 @@ const detailDragAndDrop = ref({
 });
 
 const uploadFile = async (value) => {
-  console.log(value);
+
   state.loading = true;
   const formData = new FormData();
   formData.append("file", value.file);
@@ -52,7 +52,7 @@ const uploadFile = async (value) => {
     state.url = `<img src="${data.value.data.url}" alt="${value.file.name}">`;
     state.loading = false;
   } catch (error) {
-    console.log(error);
+    console.error(error);
   }
 };
 </script>

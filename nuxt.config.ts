@@ -6,9 +6,7 @@ export default defineNuxtConfig({
     },
   },
   modules: [
-    "@nuxt/ui",
     "@nuxtjs/tailwindcss",
-    "@pinia/nuxt",
     [
       "@nuxtjs/google-fonts",
       {
@@ -20,6 +18,5 @@ export default defineNuxtConfig({
         },
       },
     ],
-    "nuxt-icons",
   ],
 });
