@@ -107,6 +107,7 @@
           @dragover="dragover"
           @dragleave="dragleave"
           @drop="drop"
+          @paste="testPaste"
         >
           <div class="flex flex-col items-center justify-center">
             <IconSvg
@@ -116,12 +117,13 @@
               fillColor="#000"
             />
             <h5 class="text-xl mt-5 text-gray-800 font-bold">
-              Drop Files to Upload
+              Drag and drop or paste images to upload
             </h5>
             <p class="mt-1 text-gray-700">atau</p>
             <span class="mt-2 text-green-600 underline">Pilih File</span>
 
             <p class="text-xs text-gray-600 mt-4">{{ sublabel }}</p>
+            <p class="text-xs text-gray-600 mt-4">Hanya dapat mengupload 1 file.</p>
           </div>
           <input
             id="drag-and-drop-file"
@@ -284,5 +286,15 @@ const durationOptions = ref([
 
 const onUploadFile = async () => {
   emit("uploadFile", { file: files.value, seconds: selectedDuration.value });
+};
+
+const testPaste = (e: ClipboardEvent): void => {
+  e.preventDefault();
+  const items = e.clipboardData?.items[0];
+
+  if (items.kind === "file") {
+    const pasteFile = items.getAsFile();
+    onChangeUpload({ target: { files: [pasteFile] } });
+  }
 };
 </script>

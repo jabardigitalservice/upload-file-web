@@ -3,7 +3,7 @@
     <DragAndDropFile
       ref="BaseDragAndDropFile"
       label="Upload File :"
-      sublabel="Tipe File JPG/JPEG/PNG/SVG dengan maksimal ukuran file 10 MB"
+      sublabel="Tipe File JPG/JPEG/PNG/SVG dengan maksimal ukuran file 10 MB."
       height-drag-and-drop="h-[350px]"
       :detail-drag-and-drop="detailDragAndDrop"
       @upload-file="uploadFile"
