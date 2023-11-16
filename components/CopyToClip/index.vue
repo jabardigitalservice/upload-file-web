@@ -1,7 +1,6 @@
 <template>
-  <div class="max-w-3xl mx-auto mt-5">
-    <label
-      class="block mt-2 text-sm font-bold text-gray-900 dark:text-white mb-1"
+  <div class="px-3 xl:px-0 max-w-3xl mx-auto mt-5">
+    <label class="block mt-2 text-sm font-bold text-gray-900 mb-1"
       >{{ label }} :
     </label>
     <div class="flex items-center justify-center">

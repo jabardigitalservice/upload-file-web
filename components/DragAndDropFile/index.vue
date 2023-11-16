@@ -1,18 +1,18 @@
 <template>
-  <div class="max-w-3xl mx-auto">
+  <div class="px-3 xl:px-0 max-w-3xl mx-auto">
     <div class="font-lato text-gray-800">
       <slot name="header" />
       <div class="flex items-center justify-between">
         <div>
           <label
             for="delete-image-times"
-            class="block mb-2 text-sm font-bold text-gray-900 dark:text-white"
+            class="block mb-2 text-sm font-bold text-gray-900"
             >Auto Delete Image :
           </label>
           <select
             v-model="selectedDuration"
             id="delete-image-times"
-            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg block w-full p-2.5"
           >
             <option
               v-for="option in durationOptions"
@@ -24,18 +24,25 @@
           </select>
         </div>
 
-        <button
-          type="button"
-          :disabled="disabledButton"
-          :class="{
-            'cursor-not-allowed': disabledButton,
-            'opacity-50': disabledButton,
-          }"
-          @click="onUploadFile()"
-          class="px-3 py-2 text-xs font-medium text-center text-white bg-blue-700 rounded-lg hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
-        >
-          Upload File
-        </button>
+        <div>
+          <label
+            for="delete-image-times"
+            class="block mb-2 text-sm font-bold text-gray-900"
+          >
+          </label>
+          <button
+            type="button"
+            :disabled="disabledButton"
+            :class="{
+              'cursor-not-allowed': disabledButton,
+              'opacity-50': disabledButton,
+            }"
+            @click="onUploadFile()"
+            class="px-3 py-2 text-xs font-medium text-center text-white bg-blue-700 rounded-lg hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300"
+          >
+            Upload File
+          </button>
+        </div>
       </div>
       <div class="mt-2 flex w-full items-center justify-center">
         <div
@@ -116,14 +123,23 @@
               :size="36"
               fillColor="#000"
             />
-            <h5 class="text-xl mt-5 text-gray-800 font-bold">
+            <h5
+              class="text-[14px] xl:text-xl mt-5 text-gray-800 font-bold text-center"
+            >
               Drag and drop or paste images to upload
             </h5>
-            <p class="mt-1 text-gray-700">atau</p>
-            <span class="mt-2 text-green-600 underline">Pilih File</span>
+            <span class="text-xs xl:text-[14px] mt-1 xl:mt-3 text-gray-70 text-center">
+              atau
+            </span>
+            <span
+              class="text-sm xl:text-[14px] mt-1 xl:mt-3 text-green-600 underline text-center"
+              >Pilih File</span
+            >
 
-            <p class="text-xs text-gray-600 mt-4">{{ sublabel }}</p>
-            <p class="text-xs text-gray-600 mt-4">Hanya dapat mengupload 1 file.</p>
+            <p class="text-[10px] text-gray-600 mt-4 xl:mt-4 text-center">{{ sublabel }}</p>
+            <p class="text-[10px] text-gray-600 mt-2 xl:mt-4 text-center">
+              Hanya dapat mengupload 1 file.
+            </p>
           </div>
           <input
             id="drag-and-drop-file"
@@ -163,7 +179,7 @@ const emit = defineEmits(["uploadFile", "resetUrl"]);
 
 const files = ref();
 const url = ref("");
-const dataFiles = ref({
+const dataFiles = reactive({
   name: "",
   mimeType: "",
   fileSize: "",
@@ -182,12 +198,12 @@ const onChangeUpload = (e) => {
   if (e.target.files[0]) {
     files.value = e.target.files[0];
     url.value = URL.createObjectURL(files.value);
-    dataFiles.value.name = files.value.name;
-    dataFiles.value.mimeType = files.value.type;
-    dataFiles.value.fileSize = convertSize(files.value.size);
+    dataFiles.name = files.value.name;
+    dataFiles.mimeType = files.value.type;
+    dataFiles.fileSize = convertSize(files.value.size);
     fileInputIsChange.value = true;
     checkFileValidation();
-    dataFiles.value.fileCorrect = fileIsCorrect.value;
+    dataFiles.fileCorrect = fileIsCorrect.value;
   }
 };
 
@@ -269,19 +285,13 @@ const formatFileIsCompatible = () => {
   return props.detailDragAndDrop.formatTypeFile.includes(files.value.type);
 };
 
-const selectedDuration = ref(60);
-const durationOptions = ref([
-  { value: 60, label: "Setelah 1 Menit" },
-  { value: 300, label: "Setelah 5 Menit" },
-  { value: 600, label: "Setelah 10 Menit" },
-  { value: 1800, label: "Setelah 30 Menit" },
-  { value: 3600, label: "Setelah 1 Jam" },
-  { value: 10800, label: "Setelah 3 Jam" },
-  { value: 21600, label: "Setelah 6 Jam" },
-  { value: 43200, label: "Setelah 12 Jam" },
-  { value: 86400, label: "Setelah 1 Hari" },
+const selectedDuration = ref(604800);
+const durationOptions = reactive([
   { value: 604800, label: "Setelah 1 Minggu" },
+  { value: 1209600, label: "Setelah 2 Minggu" },
+  { value: 1814400, label: "Setelah 3 Minggu" },
   { value: 2592000, label: "Setelah 1 Bulan" },
+  { value: 5184000, label: "Setelah 2 Bulan" },
 ]);
 
 const onUploadFile = async () => {
