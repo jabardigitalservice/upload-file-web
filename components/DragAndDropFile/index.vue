@@ -114,7 +114,7 @@
           @dragover="dragover"
           @dragleave="dragleave"
           @drop="drop"
-          @paste="testPaste"
+          @paste="pasteFile"
         >
           <div class="flex flex-col items-center justify-center">
             <IconSvg
@@ -298,7 +298,7 @@ const onUploadFile = async () => {
   emit("uploadFile", { file: files.value, seconds: selectedDuration.value });
 };
 
-const testPaste = (e: ClipboardEvent): void => {
+const pasteFile = (e: ClipboardEvent): void => {
   e.preventDefault();
   const items = e.clipboardData?.items[0];
 
