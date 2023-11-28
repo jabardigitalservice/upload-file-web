@@ -128,7 +128,9 @@
             >
               Drag and drop or paste images to upload
             </h5>
-            <span class="text-xs xl:text-[14px] mt-1 xl:mt-3 text-gray-70 text-center">
+            <span
+              class="text-xs xl:text-[14px] mt-1 xl:mt-3 text-gray-70 text-center"
+            >
               atau
             </span>
             <span
@@ -136,7 +138,9 @@
               >Pilih File</span
             >
 
-            <p class="text-[10px] text-gray-600 mt-4 xl:mt-4 text-center">{{ sublabel }}</p>
+            <p class="text-[10px] text-gray-600 mt-4 xl:mt-4 text-center">
+              {{ sublabel }}
+            </p>
             <p class="text-[10px] text-gray-600 mt-2 xl:mt-4 text-center">
               Hanya dapat mengupload 1 file.
             </p>
@@ -307,4 +311,22 @@ const pasteFile = (e: ClipboardEvent): void => {
     onChangeUpload({ target: { files: [pasteFile] } });
   }
 };
+
+const handleGlobalPaste = (event) => {
+
+  const items = event.clipboardData?.items[0];
+
+  if (items.kind === "file") {
+    const pasteFile = items.getAsFile();
+    onChangeUpload({ target: { files: [pasteFile] } });
+  }
+};
+
+onMounted(() => {
+  window.addEventListener("paste", handleGlobalPaste);
+});
+
+onBeforeUnmount(() => {
+  window.removeEventListener("paste", handleGlobalPaste);
+});
 </script>
