@@ -30,7 +30,7 @@ const state = reactive({
 
 const detailDragAndDrop = ref({
   informationSizeCompatible:
-    "Ukuran file dokumen SK tidak boleh melebihi 10 MB.",
+    "Ukuran file tidak boleh melebihi 10 MB.",
   informationFormatCompatible:
     "Hanya file yang berformat JPG/JPEG/PNG/SVG yang dapat diupload.",
   formatTypeFile: ["image/jpeg", "image/png", "image/jpg", "image/svg+xml"],
